@@ -1,5 +1,6 @@
 using API.Data;
 using API.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,6 +33,7 @@ namespace API
     }
 
     [HttpGet] // /api/users
+    [AllowAnonymous] // temporarily allow all requests.
     public async Task<ActionResult <IEnumerable<AppUser>>> GetUsers()
     {
       var users = await _context.Users.ToListAsync();
