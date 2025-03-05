@@ -1,4 +1,5 @@
 
+using API.ExceptionMiddleware;
 using API.Extensions;
 
 
@@ -12,6 +13,8 @@ builder.Services.AddIdentityServives(builder.Configuration);
 
 var app = builder.Build();
 
+// middleware
+app.UseMiddleware<ExceptionMiddleware>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
