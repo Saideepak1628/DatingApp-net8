@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using API.Controllers;
 using API.Data;
 using API.DTOs;
@@ -12,7 +13,7 @@ namespace API.Controllers
 {
 
   [Authorize]
-  public class UserController(IUserRepository repository) : BaseApiController
+  public class UserController(IUserRepository repository, IMapper mapper) : BaseApiController
   {
 
     // private readonly DataContext _context;
@@ -58,6 +59,37 @@ namespace API.Controllers
         return BadRequest("User not found");
       }
     }
+
+    [HttpPut]
+public async Task<ActionResult> UpdateUser([FromBody] MemberUpdateDto memberUpdateDto) 
+{
+    // Get username from token
+    var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    
+    if (string.IsNullOrEmpty(username))
+    {
+        return BadRequest("No Username found in the token");
+    }
+
+    // Fetch user from the repository
+    var user = await repository.GetUserByUsernameAsync(username);
+
+    if (user == null) 
+    {
+        return NotFound("User not found");
+    }
+
+    // Map DTO to user entity
+    mapper.Map(memberUpdateDto, user);
+
+    // Save changes
+    if (await repository.SaveAllAsync()) 
+        return NoContent(); // Success: 204 No Content
+
+    return BadRequest("Failed to update the user");
+}
+
+
   }
 
 

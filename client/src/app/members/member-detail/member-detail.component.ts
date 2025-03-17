@@ -27,23 +27,19 @@ export class MemberDetailComponent implements OnInit {
 
   loadMember() 
   {
-    const username = this.route.snapshot.paramMap.get(('username'));
+    const username = this.route.snapshot.paramMap.get('username');
+    console.log(username);
     if (!username) return;
     this.memberService.getMember(username).subscribe({
       next: member => {
         this.member = member;
         member.photos.map(p => {
-          this.images.push(new ImageItem({src:p.url, thumb: p.url}))
+          this.images.push(new ImageItem({src: p.url, thumb: p.url}))
         })
-      }
+      },
+      error: err => console.error('Error fetching member:', err)
     })
 
-
-
   }
-
-
-
   
-
 }
